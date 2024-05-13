@@ -1,0 +1,229 @@
+{
+	// Place your snippets for csharp here. Each snippet is defined under a snippet name and has a prefix, body and 
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+	// same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"Tests_SetUp": {
+		"prefix": "setup",
+		"body": [
+			"[SetUp]",
+			"public void SetUp() ",
+			"{",
+				"	${0}",
+			"}",
+			""
+		]
+	},
+	"Tests_TearDown": {
+		"prefix": "teardown",
+		"body": [
+			"[TearDown]",
+			"public void TearDown() ",
+			"{",
+				"	${0}",
+			"}",
+			""
+		]
+	},
+	"Tests_TestFixture": {
+		"prefix": "testfixture",
+		"body": [
+			"[TestFixture]",
+			"public class ${1:MyClass}Tests ",
+			"{",
+			"	${0}",
+			"}"
+		]
+	},
+	"Tests_TestFunction": {
+		"prefix": "test",
+		"body": [
+			"[Test]",
+			"public void ${1:MyFunction}_${2:WhatIsTested}()",
+			"{",
+			"	// Arrage",
+			"	${3:}",
+			"	",
+			"	// Act",
+			"	",
+			"	",
+			"	// Assert",
+			"	",
+			"	",
+			"}",
+			"${0:}",
+		]
+	},
+	"Singleton": {
+		"prefix": "awake singleton",
+		"body": [
+			"private static $1 instance;",
+			"private void Awake(){",
+			"	if (instance != null) 	Destroy(gameObject);",
+			"	else					instance = this;",
+			"}",
+		],
+		"description": "Add Awake function and instance for singleton classes"
+	},
+	"IfEditor": {
+		"prefix": "editor #if",
+		"body": [
+			"#if UNITY_EDITOR",
+			"using UnityEditor;",
+			"",
+			"[CustomEditor(typeof(${1:MyClassName})), CanEditMultipleObjects]",
+			"public class ${1:MyClassName}Editor : Editor",
+			"{",
+			"    public override void OnInspectorGUI()",
+			"    {",
+			"		var myTarget = target as ${1};",
+			"",
+			"       base.OnInspectorGUI();",
+			"",
+			"		GUILayout.Space(20);""",
+			"        ",
+			"		if (GUILayout.Button(\"${2}\"))",
+			"		{",
+			"			${0}",
+			"		}",
+			"    }",
+			"}",
+			"#endif",
+			""
+		],
+		"description": "Creates a custom editor script for Unity"
+	},
+	"IfEditorDerived": {
+		"prefix": "editor #if for derieved classes also",
+		"body": [
+			"#if UNITY_EDITOR",
+			"using UnityEditor;",
+			"",
+			"[CustomEditor(typeof(${1:MyClassName}), editorForChildClasses: true), CanEditMultipleObjects]",
+			"public class ${1:MyClassName}Editor : Editor",
+			"{",
+			"    public override void OnInspectorGUI()",
+			"    {",
+			"		var myTarget = target as ${1};",
+			"		if (GUILayout.Button(\"${2}\"))",
+			"		{",
+			"			${0}",
+			"		}",
+			"        ",
+			"        GUILayout.Space(20);",
+			"        ",
+			"        base.OnInspectorGUI();",
+			"    }",
+			"}",
+			"#endif",
+			""
+		],
+		"description": "Creates a custom editor script for Unity"
+	},
+	"SerializedField": {
+		"prefix": "serfield",
+		"body": [
+			"[SerializeField] private ${1:Type} _${2:name};",
+			"$0"
+		]
+	},
+	"RequireComponent": {
+		"prefix": "req",
+		"body": [
+			"[RequireComponent(typeof(${1:ComponentToRequire}))]",
+		]
+	},
+	"IENumerator": {
+		"prefix": "IE",
+		"body": [
+			"IEnumerator ${1:My}Coroutine()",
+			"{",
+			"	${0:yield return null;}",
+			"}"
+		]
+	},
+	"new Vector3(x, y, z)": {
+		"prefix": "vec3",
+		"body": [
+			"var ${1:myVector3} = new Vector3(${2:0f}, ${3:0f}, ${4:0f});",
+			"${0}"
+		]
+	},
+	"private void function()": {
+		"prefix": "Functionvoid",
+		"body": [
+			"void ${1:MyFunction}()",
+			"{",
+			"	${0}",
+			"}",
+			"	"
+		]
+	},
+	"private int function()": {
+		"prefix": "Functionint",
+		"body": [
+			"int ${1:MyFunction}()",
+			"{",
+			"	var ${2:myInt} = 0;",
+			"	${0}",
+			"	return ${2};",
+			"}",
+			"	"
+		]
+	},
+	"private float function()": {
+		"prefix": "Functionfloat",
+		"body": [
+			"float ${1:MyFunction}()",
+			"{",
+			"	var ${2:myFloat} = 0f;",
+			"	${0}",
+			"	return ${2};",
+			"}",
+			"	"
+		]
+	},
+	"private string function()": {
+		"prefix": "Functionstring",
+		"body": [
+			"string ${1:MyFunction}()",
+			"{",
+			"	var ${2:myString} = \"\";",
+			"	${0}",
+			"	return ${2};",
+			"}",
+			"	"
+		]
+	},
+	"private Vector3 function()": {
+		"prefix": "FunctionVector3",
+		"body": [
+			"Vector3 ${1:MyFunction}()",
+			"{",
+			"	var ${2:myVector} = new Vector3(${2:0f}, ${3:0f}, ${4:0f});",
+			"	${0}",
+			"	return ${2};",
+			"}",
+			"	"
+		]
+	},
+	"Region and End Region": {
+		"prefix": "region",
+		"body": [
+			"#region ${1:AccessLevel RegionName}",
+			"	${3}",
+			"#endregion",
+			"",
+			"${0}"
+		]
+	},
+}

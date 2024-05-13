@@ -1,0 +1,20 @@
+{
+    "name": "Company.NewExtension.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d6ff4f3ad3070304d845a20d0147d358",
+        "GUID:f503e99df8b877b41ae48bad04395808",
+        "Company.NewExtension"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

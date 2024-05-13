@@ -1,0 +1,16 @@
+{
+    "name": "Company.NewExtension",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d6ff4f3ad3070304d845a20d0147d358"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,73 @@
+name: Update Package Default Files
+
+on:
+  create: # This will try perform the action on create.
+  workflow_dispatch: # This will allow manual triggering of the workflow.
+
+jobs:
+  modify-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v2
+        
+      - name: Rename .asmdef files
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          find . -type f \( -name '*.asmdef' -o -name '*.asmdef.meta' \) | while read -r FILE_PATH; do
+          NEW_FILE_NAME="${FILE_PATH/NewExtension/$REPO_NAME}"
+            echo "Renaming ${FILE_PATH} to ${NEW_FILE_NAME}"
+            mv "$FILE_PATH" "$NEW_FILE_NAME"
+          done
+
+      - name: Replace content in .asmdef files
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          find . -type f \( -name '*.asmdef' -o -name '*.asmdef.meta' \) | while read -r FILE_PATH; do
+          if grep -q 'NewExtension' "$FILE_PATH"; then
+              echo "Old content in ${FILE_PATH}:"
+              cat "$FILE_PATH"
+
+              sed -i 's/NewExtension/'"$REPO_NAME"'/g' "$FILE_PATH"
+
+              echo "New content in ${FILE_PATH}:"
+              cat "$FILE_PATH"
+            fi
+          done
+
+      - name: Replace content in package.json file
+        run: |
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          REPO_NAME_LOWER=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
+          find . -type f -name 'package.json' | while read -r FILE_PATH; do
+            if grep -q 'NewExtension' "$FILE_PATH"; then
+              echo "Old package name in ${FILE_PATH}:"
+              cat "$FILE_PATH"
+
+              sed -i 's/NewExtension/'"$REPO_NAME"'/g' "$FILE_PATH"
+
+              echo "New package name in ${FILE_PATH}:"
+              cat "$FILE_PATH"
+            fi
+            if grep -q 'newextension' "$FILE_PATH"; then
+              echo "Old content in ${FILE_PATH}:"
+              cat "$FILE_PATH"
+
+              sed -i 's/newextension/'"$REPO_NAME_LOWER"'/g' "$FILE_PATH"
+
+              echo "New content in ${FILE_PATH}:"
+              cat "$FILE_PATH"
+            fi
+          done
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "Automatic New Template Actions"
+    
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
