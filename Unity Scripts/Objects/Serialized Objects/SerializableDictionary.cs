@@ -1,51 +1,86 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-/**
-    To use:
-        i.e. "SerializableDictionary<string, int> {}"
-*/
 namespace MCG.UnityCheatSheet
 {
     [Serializable]
     public class SerializableDictionary<TKey, TValue>
-        : Dictionary<TKey, TValue>,
-            ISerializationCallbackReceiver
+        : Dictionary<TKey, TValue>, ISerializationCallbackReceiver
     {
-        [SerializeField]
-        private List<TKey> keys = new List<TKey>();
+        // Backing lists shown in Inspector
+        [SerializeField, FormerlySerializedAs("keys")]
+        private List<TKey> keyList = new List<TKey>();
 
-        [SerializeField]
-        private List<TValue> values = new List<TValue>();
+        [SerializeField, FormerlySerializedAs("values")]
+        private List<TValue> valueList = new List<TValue>();
 
-        // save the dictionary to lists
         public void OnBeforeSerialize()
         {
-            keys.Clear();
-            values.Clear();
+#if UNITY_EDITOR
+            // In edit mode, do NOT overwrite the lists from the runtime dictionary.
+            // This allows the + button to add a new row that persists through ApplyModifiedProperties.
+            if (!Application.isPlaying)
+                return;
+#endif
+            keyList.Clear();
+            valueList.Clear();
             foreach (KeyValuePair<TKey, TValue> pair in this)
             {
-                keys.Add(pair.Key);
-                values.Add(pair.Value);
+                keyList.Add(pair.Key);
+                valueList.Add(pair.Value);
             }
         }
 
-        // load dictionary from lists
         public void OnAfterDeserialize()
         {
             this.Clear();
 
-            if (keys.Count != values.Count)
-                throw new System.Exception(
-                    string.Format(
-                        "there are {0} keys and {1} values after deserialization. Make sure that both key and value types are serializable.",
-                        keys.Count,
-                        values.Count
-                    )
-                );
-            for (int i = 0; i < keys.Count; i++)
-                this.Add(keys[i], values[i]);
+            // Keep lists in sync to avoid errors from inspector edits
+#if UNITY_EDITOR
+            if (keyList.Count > valueList.Count)
+            {
+                int toAdd = keyList.Count - valueList.Count;
+                for (int i = 0; i < toAdd; i++)
+                    valueList.Add(default(TValue));
+            }
+            else if (valueList.Count > keyList.Count)
+            {
+                int toAdd = valueList.Count - keyList.Count;
+                for (int i = 0; i < toAdd; i++)
+                    keyList.Add(default(TKey));
+            }
+#else
+            int min = Math.Min(keyList.Count, valueList.Count);
+            if (keyList.Count > min)
+                keyList.RemoveRange(min, keyList.Count - min);
+            if (valueList.Count > min)
+                valueList.RemoveRange(min, valueList.Count - min);
+#endif
+
+            int count = Math.Min(keyList.Count, valueList.Count);
+            for (int i = 0; i < count; i++)
+            {
+                var key = keyList[i];
+                var value = valueList[i];
+
+                // Skip null/invalid keys so Dictionary.Add never sees a null
+                if (IsNullKey(key))
+                    continue;
+
+                if (this.ContainsKey(key))
+                    this[key] = value;
+                else
+                    this.Add(key, value);
+            }
+        }
+
+        private static bool IsNullKey(TKey key)
+        {
+            if (key == null) return true;
+            if (key is UnityEngine.Object uo && uo == null) return true;
+            return false;
         }
     }
 }
